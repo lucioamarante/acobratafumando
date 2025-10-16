@@ -1,52 +1,38 @@
-import pandas as pd
+# --- Calculadora de Rendimento com Juros Compostos ---
 
-# --- Parâmetros Definidos ---
-valor_inicial_global = 1000.00
-percentual_entrada = 0.02  # 2% em formato decimal
-numero_dias = 30
-nome_do_arquivo = 'progressao_linear.xlsx'
+try:
+    # 1. ENTRADA DE DADOS
+    valor_inicial = float(input("Digite o valor inicial (ex: 1000): R$ "))
+    taxa_percentual = float(input("Digite a taxa de rendimento por período (ex: 5 para 5%): % "))
+    periodo = int(input("Digite a quantidade de períodos (ex: 12 meses): "))
 
-# --- Cálculos ---
+    # 2. CÁLCULO
+    # A fórmula de juros compostos é: M = C * (1 + i)^t
+    # Onde:
+    # M = Montante final
+    # C = Capital inicial (valor_inicial)
+    # i = Taxa de juros em decimal (taxa_percentual / 100)
+    # t = Tempo / Período
 
-# 1. Calcular o valor fixo da entrada (2% do valor inicial original)
-valor_da_entrada_fixo = valor_inicial_global * percentual_entrada
+    # Convertendo a taxa percentual para decimal
+    taxa_decimal = taxa_percentual / 100
 
-# 2. Preparar uma lista para armazenar os dados de cada dia
-dados_para_tabela = []
-
-# 3. Iniciar o valor que será atualizado a cada dia
-valor_do_dia = valor_inicial_global
-
-# 4. Loop para simular os 30 dias
-for dia in range(1, numero_dias + 1):
-    # O valor inicial da linha atual é o valor com que o dia começou
-    valor_inicial_da_linha = valor_do_dia
+    # Aplicando a fórmula
+    valor_final = valor_inicial * (1 + taxa_decimal) ** periodo
     
-    # O valor final é o valor inicial do dia + a entrada fixa
-    valor_final_da_linha = valor_inicial_da_linha + valor_da_entrada_fixo
-    
-    # Adicionar os dados do dia à nossa lista
-    dados_para_tabela.append({
-        'Dia': dia,
-        'Valor Inicial': valor_inicial_da_linha,
-        'Entradas (%)': f"{percentual_entrada*100}%",
-        'Valor da Entrada': valor_da_entrada_fixo,
-        'Valor Final': valor_final_da_linha
-    })
-    
-    # Atualizar o valor para o início do próximo dia
-    valor_do_dia = valor_final_da_linha
+    # Calculando o total de juros ganhos
+    total_juros = valor_final - valor_inicial
 
-# 5. Criar a tabela (DataFrame) com a biblioteca Pandas
-df = pd.DataFrame(dados_para_tabela)
+    # 3. APRESENTAÇÃO DO RESULTADO
+    print("\n--------------------------------")
+    print("✨ RESULTADO DO INVESTIMENTO ✨")
+    print(f"Valor Inicial: R$ {valor_inicial:,.2f}")
+    print(f"Taxa de Juros: {taxa_percentual}% por período")
+    print(f"Período: {periodo} períodos")
+    print("--------------------------------")
+    print(f"O valor final será de: R$ {valor_final:,.2f}")
+    print(f"Total de juros ganhos: R$ {total_juros:,.2f}")
+    print("--------------------------------")
 
-# 6. Formatar colunas de moeda para melhor visualização
-for coluna in ['Valor Inicial', 'Valor da Entrada', 'Valor Final']:
-    df[coluna] = df[coluna].map('R$ {:,.2f}'.format)
-
-
-# 7. Salvar a tabela em um arquivo Excel
-# O argumento index=False remove a coluna de índice padrão do Pandas
-df.to_excel(nome_do_arquivo, index=False)
-
-print(f"Tabela salva com sucesso no arquivo '{nome_do_arquivo}'!")
+except ValueError:
+    print("\nErro: Por favor, digite apenas números válidos para os valores.")
